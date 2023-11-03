@@ -4,7 +4,6 @@ class Obsticle extends Phaser.Physics.Arcade.Sprite {
 
         scene.add.existing(this);
         scene.physics.add.existing(this, false);
-        scene.physics.add.collider(this, player);
 
         this.setImmovable(true)
 
