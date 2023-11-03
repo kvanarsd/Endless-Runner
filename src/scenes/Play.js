@@ -5,7 +5,7 @@ class Play extends Phaser.Scene {
 
     create() {
         this.speed = 3;
-        this.genIn = game.config.width / 3;
+        this.genIn = game.config.width / 12;
 
         // background scene
         this.bckg1 = this.add.tileSprite(0, 0, game.config.width, game.config.height,"bckg1").setOrigin(0,0);
@@ -23,22 +23,27 @@ class Play extends Phaser.Scene {
 
         // obstacles
         //this.ob1 = this.physics.add.sprite(game.config.width + borderPadding, Phaser.Math.Between(game.config.height/2 + borderPadding*3, game.config.height - borderPadding*7), "ob3").setImmovable(true);
-        this.ob3 = new Obsticle(this, game.config.width,Phaser.Math.Between(game.config.height/2 + borderPadding*3, game.config.height - borderPadding*7), "ob3", this.player).setOrigin(0,1)
+        const newBird = new Obsticle(this, game.config.width,Phaser.Math.Between(game.config.height/2 + borderPadding*3, game.config.height - borderPadding*4), "ob3", this.player).setOrigin(0,1)
 
-        this.ob3.anims.play("bird");
-        this.ob3.setSize(64, 20).setOffset(0, 2*(this.ob3.height)/3);
+        newBird.anims.play("bird");
+        newBird.setSize(64, 20).setOffset(0, 2*(newBird.height)/3);
         //this.ob1.setSize(64, 20).setOffset(0, 2*(this.ob1.height)/3);
 
         // collision
-        this.player.setDepth(10); // or any appropriate depth value
-        this.ob3.setDepth(10); // or the same depth value as the player
-        
         this.physics.add.collider(this.floor, this.player);
-        this.physics.add.collider(this.player, this.ob3 , () => {
-            console.log("collided")
-            this.player.setVelocityX(this.player.push)
-            this.gameOver = true;
-            
+
+        let config = {
+            immovable: true
+        }
+        this.birds = this.physics.add.group(config);
+        this.birds.add(newBird)
+        this.physics.add.collider(this.player, this.birds , () => {
+            let collide = this.player.body.touching
+            console.log(collide)
+            if(!collide.down) {
+                this.player.setVelocityX(this.player.push)
+                this.gameOver = true;
+            }
         }, null, this);
 
         // if((this.player.height + this.player.y) < (this.ob3.y + 2*(this.ob3.height)/3)) {
@@ -64,7 +69,36 @@ class Play extends Phaser.Scene {
         //console.log(this.physics.world.collide(this.player, this.ob3))
         // scrolling
         if(!this.gameOver){
-            this.ob3.update();
+            // //obsticle gen
+            // if(this.ob3.destroyed) {
+            //     this.ob3.destroy();
+            // }
+            // if(this.ob3.child) {
+            //     const newBird = new Obsticle(this, game.config.width,Phaser.Math.Between(game.config.height/2 + borderPadding*3, game.config.height - borderPadding*7), "ob3", this.player).setOrigin(0,1)
+            //     this.ob3.child = false;
+            //     newBird.setSize(64, 20).setOffset(0, 2*(this.ob3.height)/3);
+            //     this.birds = this.physics.add.group(newBird);
+            // }
+
+            this.birds.getChildren().forEach((bird) => {
+                bird.update(); // Update obstacle logic
+
+                if (bird.destroyed) {
+                    bird.destroy();
+                    this.birds.remove(bird, true, true); // Remove obstacle from the group
+                }
+
+                if(bird.child && !bird.birthed) {
+                    bird.child = false;
+                    const newBird = new Obsticle(this, game.config.width,Phaser.Math.Between(game.config.height/2 + borderPadding*3, game.config.height - borderPadding*7), "ob3", this.player).setOrigin(0,1)
+                    newBird.child = false;
+                    newBird.setSize(64, 20).setOffset(0, 2*(newBird.height)/3);
+                    this.birds.add(newBird);
+                    bird.birthed = true
+                }
+            });
+           
+
             this.bckg1.tilePositionX += .2;
             this.bckg2.tilePositionX += .4;
             this.bckg3.tilePositionX += 1;
@@ -74,7 +108,7 @@ class Play extends Phaser.Scene {
             // console.log(this.ob3.y)
             // console.log(this.ob3.y + this.ob3.height/2)
             // console.log(this.ob3.y + this.ob3.height)
-            console.log(this.ob3.y + 1 >= this.player.y && this.player.y >= this.ob3.y -2)
+            //console.log(this.ob3.y + 1 >= this.player.y && this.player.y >= this.ob3.y -2)
             //console.log(this.player.y >= this.ob3.y -2)
             // if((this.ob3.y + .5 >= this.player.y && this.player.y >= this.ob3.y -2)
             // && ((this.ob3.x <= this.player.x && this.player.x <= this.ob3.x + this.ob3.width) 

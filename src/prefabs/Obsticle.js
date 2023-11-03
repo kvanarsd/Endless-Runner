@@ -8,19 +8,22 @@ class Obsticle extends Phaser.Physics.Arcade.Sprite {
         this.setImmovable(true)
 
         this.child = false;
+        this.birthed = false;
         this.speed = scene.speed;
-        this.destroy = false
-        this.genIn = scene.genIn
+        this.destroyed = false
+        this.genIn = Phaser.Math.Between(scene.genIn - borderUISize*3, scene.genIn + borderUISize*3)
+        console.log(this.genIn)
     }
 
     update() {
-        if(this.x >= -borderPadding*3) {
+        if(this.x >= -borderUISize*2) {
             this.x -= this.speed;
         } else {
-            this.destroy = true
+            this.destroyed = true
         }
-        if(this.x <= this.genIn && !this.child) {
+        if(this.x <=  this.genIn&& !this.child) {
             this.child = true
+            console.log(this.x)
         }
     }
 }
