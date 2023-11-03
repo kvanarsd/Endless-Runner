@@ -76,12 +76,12 @@ class Play extends Phaser.Scene {
             // console.log(this.ob3.y + this.ob3.height)
             console.log(this.ob3.y + 1 >= this.player.y && this.player.y >= this.ob3.y -2)
             //console.log(this.player.y >= this.ob3.y -2)
-            if((this.ob3.y + .5 >= this.player.y && this.player.y >= this.ob3.y -2)
-            && ((this.ob3.x <= this.player.x && this.player.x <= this.ob3.x + this.ob3.width) 
-            || (this.player.x + this.player.width >= this.ob3.x && this.player.x + this.player.width <= this.ob3.x + this.ob3.width))) {
-                this.player.setVelocityX(this.player.push)
-                this.gameOver = true;
-            }
+            // if((this.ob3.y + .5 >= this.player.y && this.player.y >= this.ob3.y -2)
+            // && ((this.ob3.x <= this.player.x && this.player.x <= this.ob3.x + this.ob3.width) 
+            // || (this.player.x + this.player.width >= this.ob3.x && this.player.x + this.player.width <= this.ob3.x + this.ob3.width))) {
+            //     this.player.setVelocityX(this.player.push)
+            //     this.gameOver = true;
+            // }
             // if(this.ob1.x >= -borderPadding) {
             //     this.ob1.x -= this.speed;
             // } else{
