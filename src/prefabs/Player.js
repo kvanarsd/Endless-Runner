@@ -7,9 +7,9 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
         //this.body.setCollideWorldBounds(true);
         this.body.setGravityY(700);
-        this.body.setSize(28,37).setOffset(10,11)
+        this.body.setSize(50,138).setOffset(74,0)
 
-        this.velocity = -450;
+        this.velocity = -400;
         this.push = -300;
         this.jumpCool = 800;
         this.doubleJump = 0;
@@ -49,7 +49,8 @@ class RunState extends State {
         const { right, up, down, space} = scene.keys
 
         // transition to swing if pressing space
-        if(Phaser.Input.Keyboard.JustDown(up) && player.body.blocked.down) {
+        //console.log(Phaser.Input.Keyboard.JustDown(up), scene.onFloor)
+        if(Phaser.Input.Keyboard.JustDown(up) && scene.onFloor) {
             player.doubleJump = 1;
             this.stateMachine.transition('jump')
             return
@@ -71,24 +72,30 @@ class RunState extends State {
 
 class JumpState extends State {
     enter(scene, player) {
-        const {up} = scene.keys
+        console.log("jump")
+        player.anims.play(`p-jump`)
         scene.notJump = false
-        player.anims.stop();
-        //player.anims.play(`p-jump`)
+
         player.setVelocityY(player.velocity)
-        
-        // scene.time.delayedCall(400, () => {
-        //     player.anims.play(`p-run`)
-        // })
-        console.log(player.body.onFloor)
-        if(player.doubleJump < 2 && up.isDown && player.body.onFloor) {
-            console.log("jump!")
+        scene.onFloor = false;
+    
+    }
+    execute(scene, player) {
+        //const {up} = scene.keys
+        this.keys = scene.input.keyboard.addKeys({
+            up: Phaser.Input.Keyboard.KeyCodes.UP,
+        });        
+
+        if(!Phaser.Input.Keyboard.JustDown(this.keys.up) && scene.onFloor) {
+            this.stateMachine.transition('run')
+        }
+        console.log(Phaser.Input.Keyboard.JustDown(this.keys.up), scene.onFloor)
+        if(player.doubleJump < 2 && Phaser.Input.Keyboard.JustDown(this.keys.up) && !scene.onFloor) {
             player.doubleJump = 2;
             this.stateMachine.transition('dubJump')
         } 
-        if (player.body.blocked.down) {
-            this.stateMachine.transition('run')
-        }
+
+        
     }
 }
 
@@ -105,10 +112,10 @@ class DubJumpState extends State {
 
 class DuckState extends State {
     enter(scene, player) {
-        player.body.setSize(18,27).setOffset(18,18)
+        player.body.setSize(124,50).setOffset(0,88)
         player.anims.play(`p-duck`)
         player.once('animationcomplete', () => {
-            player.body.setSize(28,37).setOffset(10,11)
+            player.body.setSize(50,138).setOffset(74,0)
             this.stateMachine.transition('run')
         })
     }

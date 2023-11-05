@@ -6,7 +6,7 @@ class Play extends Phaser.Scene {
     create() {
         this.speed = 3;
         this.genIn = game.config.width / 12;
-        this.notJump = true;
+        this.onFloor = false;
 
         // background scene
         this.bckg1 = this.add.tileSprite(0, 0, game.config.width, game.config.height,"bckg1").setOrigin(0,0);
@@ -20,7 +20,7 @@ class Play extends Phaser.Scene {
         this.keys = this.input.keyboard.createCursorKeys()
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
         // player code
-        this.player = new Player(this, 150, game.config.height/2, "character", 7).setOrigin(0,0)
+        this.player = new Player(this, 150, game.config.height/2, "character", 7).setOrigin(0,0).setScale(.8 )
 
         // obstacles
         const newBird = new Obsticle(this, game.config.width,Phaser.Math.Between(game.config.height/2 + borderPadding*3, game.config.height - borderPadding*4), "ob3", 0, this.player).setOrigin(0,1)
@@ -29,7 +29,9 @@ class Play extends Phaser.Scene {
         newBird.setSize(64, 20).setOffset(0, (newBird.height)/2.2);
 
         // collision
-        this.physics.add.collider(this.floor, this.player);
+        this.physics.add.collider(this.floor, this.player, () => {
+            this.onFloor = true;
+        });
 
         this.birds = this.physics.add.group(config = {
             immovable: true
@@ -38,7 +40,7 @@ class Play extends Phaser.Scene {
 
         this.physics.add.collider(this.player, this.birds , () => {
             let collide = this.player.body.touching
-            if(!collide.down || this.notJump) {
+            if(!collide.down || this.onFloor) {
                 this.player.setVelocityX(this.player.push)
                 this.gameOver = true;
             }
@@ -82,10 +84,6 @@ class Play extends Phaser.Scene {
                 }
             });
 
-            // collision after jumping
-            if(!this.notJump) {
-                
-            }
            
             // background movement
             this.bckg1.tilePositionX += .2;

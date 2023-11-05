@@ -4,8 +4,9 @@ class Load extends Phaser.Scene {
     }
 
     preload() {
-        this.load.spritesheet("character", "./assets/Character_002.png", {
-            frameWidth: 48
+        this.load.spritesheet("character", "./assets/CharacterWalk.png", {
+            frameWidth: 124,
+            frameHeight: 138
         })
         this.load.image('bckg1', './assets/bckg1.png');
         this.load.image('bckg2', './assets/bckg2.png');
@@ -34,35 +35,35 @@ class Load extends Phaser.Scene {
             key: 'p-run',
             frameRate: 8,
             repeat: -1,
-            frames: this.anims.generateFrameNumbers('character', { start: 6, end: 8 }),
+            frames: this.anims.generateFrameNumbers('character', { start: 0, end: 6 }),
         })
 
         this.anims.create({
             key: 'p-jump',
-            frameRate: 0,
+            frameRate: 3,
             repeat: 0 ,
-            frames: this.anims.generateFrameNumbers('character', { start: 7, end: 7 }),
+            frames: this.anims.generateFrameNumbers('character', { start: 8, end: 10 }),
         })
 
         this.anims.create({
             key: 'p-hurt',
             frameRate: 8,
             repeat: 0,
-            frames: this.anims.generateFrameNumbers('character', { start: 4, end: 6 }),
+            frames: this.anims.generateFrameNumbers('character', { start: 15, end: 15 }),
         })
 
         this.anims.create({
             key: 'p-duck',
             frameRate: 3,
             repeat: 0,
-            frames: this.anims.generateFrameNumbers('character', { start: 9, end: 11 }),
+            frames: this.anims.generateFrameNumbers('character', { start: 11, end: 13 }),
         })
 
         this.anims.create({
             key: 'p-dash',
             frameRate: 3,
             repeat: 0,
-            frames: this.anims.generateFrameNumbers('character', { start: 0, end: 2 }),
+            frames: this.anims.generateFrameNumbers('character', { start: 14, end: 14 }),
         })
 
         this.scene.start("menuScene");
