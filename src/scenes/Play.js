@@ -24,23 +24,37 @@ class Play extends Phaser.Scene {
         // player code
         this.player = new Player(this, 150, game.config.height/2, "character", 7).setOrigin(0,0).setScale(.8 )
 
-        // obstacles
-        const newBird = new Obsticle(this, game.config.width,Phaser.Math.Between(game.config.height/2 + borderPadding*3, game.config.height - borderPadding*4), "ob3", 0, this.player).setOrigin(0,1)
-
+        // Bird obstacles
+        const newBird = new Obsticle(this, game.config.width,Phaser.Math.Between(game.config.height/2 + borderPadding*3, game.config.height - borderPadding*4), "ob3", 0, this.player, this.genIn).setOrigin(0,1)
         newBird.anims.play("bird");
         newBird.setSize(64, 20).setOffset(0, (newBird.height)/2.2);
+        this.birds = this.physics.add.group(config = {
+            immovable: true
+        });
+        this.birds.add(newBird)
+        
+        // Other obstacles
+        const newOb = new Obsticle(this, game.config.width,game.config.height - borderPadding*4, "ob" + Phaser.Math.Between(1, 2), 0, this.player, this.genIn).setOrigin(0,1)
+       
+        this.obs = this.physics.add.group(config = {
+            immovable: true
+        });
+        this.obs.add(newOb);
 
         // collision
         this.physics.add.collider(this.floor, this.player, () => {
             this.onFloor = true;
         });
 
-        this.birds = this.physics.add.group(config = {
-            immovable: true
-        });
-        this.birds.add(newBird)
-
         this.physics.add.collider(this.player, this.birds , () => {
+            let collide = this.player.body.touching
+            if(!collide.down || this.onFloor) {
+                this.player.setVelocityX(this.player.push)
+                this.gameOver = true;
+            }
+        }, null, this);
+
+        this.physics.add.collider(this.player, this.obs , () => {
             let collide = this.player.body.touching
             if(!collide.down || this.onFloor) {
                 this.player.setVelocityX(this.player.push)
@@ -101,7 +115,7 @@ class Play extends Phaser.Scene {
 
                 if(bird.child && !bird.birthed) {
                     bird.child = false;
-                    const newBird = new Obsticle(this, game.config.width,game.config.height - borderPadding*4, "ob3", 0, this.player).setOrigin(0,1)
+                    const newBird = new Obsticle(this, game.config.width,game.config.height - borderPadding*4, "ob3", 0, this.player, this.genIn).setOrigin(0,1)
                     newBird.child = false;
                     newBird.setSize(64, 20).setOffset(0, (newBird.height)/2.2);
                     newBird.anims.play("bird");
@@ -111,6 +125,22 @@ class Play extends Phaser.Scene {
                 }
             });
 
+            this.obs.getChildren().forEach((ob) => {
+                ob.update(); // Update obstacle logic
+
+                if (ob.destroyed) {
+                    ob.destroy();
+                    this.obs.remove(ob, true, true); // Remove obstacle from the group
+                }
+
+                if(ob.child && !ob.birthed) {
+                    ob.child = false;
+                    const newOb = new Obsticle(this, game.config.width,game.config.height - borderPadding*4, "ob" + Phaser.Math.Between(1, 2), 0, this.player, this.genIn).setOrigin(0,1)
+                    this.obs.add(newOb);
+                    ob.birthed = true
+                    this.score += 5 + this.level
+                }
+            });
            
             // background movement
             this.bckg1.tilePositionX += .2;
@@ -122,7 +152,7 @@ class Play extends Phaser.Scene {
             // score
             
             this.scoreLeft.text = this.score;
-        }
+        } 
 
         if(this.gameOver && Phaser.Input.Keyboard.JustDown(keySPACE)) {
             console.log("Spaces")

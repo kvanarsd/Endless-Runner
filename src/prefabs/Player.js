@@ -86,7 +86,8 @@ class JumpState extends State {
             up: Phaser.Input.Keyboard.KeyCodes.UP,
         });        
 
-        if(!Phaser.Input.Keyboard.JustDown(this.keys.up) && scene.onFloor) {
+        let collide = player.body.touching
+        if(!Phaser.Input.Keyboard.JustDown(this.keys.up) && (scene.onFloor || collide.down)) {
             this.stateMachine.transition('run')
         }
         console.log(Phaser.Input.Keyboard.JustDown(this.keys.up), scene.onFloor)
@@ -112,11 +113,13 @@ class DubJumpState extends State {
 
 class DuckState extends State {
     enter(scene, player) {
-        player.body.setSize(124,50).setOffset(0,88)
+        player.body.setSize(124,30).setOffset(0,108)
         player.anims.play(`p-duck`)
         player.once('animationcomplete', () => {
-            player.body.setSize(50,138).setOffset(74,0)
-            this.stateMachine.transition('run')
+            scene.time.delayedCall(200, () => {
+                player.body.setSize(50,138).setOffset(74,0)
+                this.stateMachine.transition('run')
+            })
         })
     }
 }
@@ -134,7 +137,6 @@ class DashState extends State {
     enter(scene, player) {
         player.anims.play(`p-dash`)
         player.once('animationcomplete', () => {
-            s
             this.stateMachine.transition('run')
         })
     }
