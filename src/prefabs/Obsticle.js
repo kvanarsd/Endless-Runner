@@ -1,6 +1,6 @@
 class Obsticle extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y, texture, player) {
-        super(scene, x, y, texture, player);
+    constructor(scene, x, y, texture, frame, player) {
+        super(scene, x, y, texture, frame, player);
 
         scene.add.existing(this);
         scene.physics.add.existing(this, false);

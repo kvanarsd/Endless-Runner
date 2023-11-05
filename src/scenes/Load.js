@@ -15,7 +15,7 @@ class Load extends Phaser.Scene {
         this.load.image('ob2', './assets/ob2.png');
         this.load.spritesheet('ob3', './assets/ob3.png', {
             frameWidth: 64,
-            frameHeight: 65
+            frameHeight: 93
         });
         this.load.image('sand', './assets/Sand.png');
     }
@@ -24,9 +24,10 @@ class Load extends Phaser.Scene {
         // animation for obsticle
         this.anims.create({
             key: 'bird',
-            frameRate: 8,
+            frameRate: 5,
             repeat: -1,
-            frames: this.anims.generateFrameNumbers('ob3', { start: 0, end: 0 }),
+            yoyo: true,
+            frames: this.anims.generateFrameNumbers('ob3', { start: 0, end: 4 }),
         })
         // animations for player
         this.anims.create({
