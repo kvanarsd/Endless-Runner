@@ -12,7 +12,6 @@ class Obsticle extends Phaser.Physics.Arcade.Sprite {
         this.speed = scene.speed;
         this.destroyed = false
         this.genIn = Phaser.Math.Between(scene.genIn - borderUISize*3, scene.genIn + borderUISize*3)
-        console.log(this.genIn)
     }
 
     update() {
@@ -23,7 +22,6 @@ class Obsticle extends Phaser.Physics.Arcade.Sprite {
         }
         if(this.x <=  this.genIn&& !this.child) {
             this.child = true
-            console.log(this.x)
         }
     }
 }

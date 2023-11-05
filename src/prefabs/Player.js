@@ -134,6 +134,7 @@ class DashState extends State {
     enter(scene, player) {
         player.anims.play(`p-dash`)
         player.once('animationcomplete', () => {
+            s
             this.stateMachine.transition('run')
         })
     }
