@@ -61,7 +61,7 @@ class RunState extends State {
             return
         }
 
-        if(Phaser.Input.Keyboard.JustDown(right)) {
+        if(Phaser.Input.Keyboard.JustDown(right) && !scene.forward) {
             this.stateMachine.transition('dash')
             return
         }
@@ -85,6 +85,11 @@ class JumpState extends State {
     execute(scene, player) {
         const {up, space} = scene.keys
 
+        if(scene.hurt) {
+            this.stateMachine.transition('hurt')
+            return
+        }
+
         let collide = player.body.touching
         if(!Phaser.Input.Keyboard.JustDown(up) && (scene.onFloor || collide.down)) {
             this.stateMachine.transition('run')
@@ -103,6 +108,11 @@ class DubJumpState extends State {
         player.setVelocityY(player.velocity)
     }
     execute(scene, player) {
+        if(scene.hurt) {
+            this.stateMachine.transition('hurt')
+            return
+        } 
+
         let collide = player.body.touching
         if(collide.down) {
             this.stateMachine.transition('run')
@@ -114,6 +124,13 @@ class DuckState extends State {
     enter(scene, player) {
         player.body.setSize(124,30).setOffset(0,108)
         player.anims.play(`p-duck`)
+        
+    }execute(scene, player) {
+        if(scene.hurt) {
+            this.stateMachine.transition('hurt')
+            return
+        }
+
         player.once('animationcomplete', () => {
             scene.time.delayedCall(200, () => {
                 player.body.setSize(50,138).setOffset(74,0)
@@ -127,7 +144,7 @@ class HurtState extends State {
     enter(scene, player) {
         player.anims.play(`p-hurt`)
         scene.chased = true
-        scene.waves = scene.time.delayedCall(3000, () => {
+        scene.waves = scene.time.delayedCall(100, () => {
             scene.chased = false
             scene.firstHit= 0
         }, null, scene)
@@ -139,7 +156,21 @@ class HurtState extends State {
 
 class DashState extends State {
     enter(scene, player) {
-        player.anims.play(`p-dash`)
+        player.anims.play(`p-dash`) 
+        player.setVelocityX(-player.velocity/3)
+    }
+    execute(scene, player) {
+        console.log("dash", scene.hurt, player.x, player.x >= 190)
+        if(scene.hurt) {
+            this.stateMachine.transition('hurt')
+            return
+        }
+
+        if(player.x >= 190) {
+            player.setVelocityX(0)
+            scene.forward = true
+        }
+
         player.once('animationcomplete', () => {
             this.stateMachine.transition('run')
         })

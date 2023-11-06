@@ -13,6 +13,7 @@ class Play extends Phaser.Scene {
         this.chased = false;
         this.hurt = false;
         this.firstHit = 0;
+        this.forward = false;
 
         // background scene
         this.bckg1 = this.add.tileSprite(0, 0, game.config.width, game.config.height,"bckg1").setOrigin(0,0);
@@ -25,6 +26,10 @@ class Play extends Phaser.Scene {
         // keys
         this.keys = this.input.keyboard.createCursorKeys()
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
+        
+        //camera
+        this.camera = this.cameras.main.setZoom(1.007)
+
         // player code
         this.player = new Player(this, 150, game.config.height/2, "character", 7).setOrigin(0,0).setScale(.8 )
 
@@ -55,6 +60,9 @@ class Play extends Phaser.Scene {
             if(!collide.down || this.onFloor) {
                 this.hurt = true;
                 this.firstHit += 1
+
+                let randomIntensity = Phaser.Math.FloatBetween(.001, .005)
+                this.camera.shake(300, randomIntensity, false)
                 
                 if(!bird.birthed) {
                     const newBird = new Obsticle(this, game.config.width, Phaser.Math.Between(game.config.height/2 + borderPadding*3, game.config.height - borderPadding*4), "ob3", 0, this.player, this.genIn).setOrigin(0,1)
@@ -73,6 +81,9 @@ class Play extends Phaser.Scene {
             if(!collide.down || this.onFloor) {
                 this.hurt = true;
                 this.firstHit += 1
+
+                let randomIntensity = Phaser.Math.FloatBetween(.001, .005)
+                this.camera.shake(300, randomIntensity, false)
 
                 if(!ob.birthed) {
                     const newOb = new Obsticle(this, game.config.width,game.config.height - borderPadding*4, "ob" + Phaser.Math.Between(1, 2), 0, this.player, this.genIn/2).setOrigin(0,1)
@@ -123,7 +134,15 @@ class Play extends Phaser.Scene {
     }
 
     update() {
+        //console.log(this.forward, this.player.x <= 150)
         if(!this.gameOver){
+            if(this.forward && !(this.player.x <= 150)) {
+                this.player.x -= 3
+            } 
+            if (this.player.x <= 150) {
+                console.log("not forward")
+                this.forward = false
+            }
             // state
             this.player.state.step();
 
@@ -136,6 +155,9 @@ class Play extends Phaser.Scene {
             // obstacle gen
             this.birds.getChildren().forEach((bird) => {
                 bird.update(); // Update obstacle logic
+                if(this.player.state.state == 'dash') {
+                    bird.x -= 1
+                }
 
                 if (bird.destroyed) {
                     bird.destroy();
