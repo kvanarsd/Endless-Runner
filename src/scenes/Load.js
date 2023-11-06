@@ -48,7 +48,7 @@ class Load extends Phaser.Scene {
         this.anims.create({
             key: 'p-hurt',
             frameRate: 8,
-            repeat: 0,
+            repeat: 6,
             frames: this.anims.generateFrameNumbers('character', { start: 15, end: 15 }),
         })
 

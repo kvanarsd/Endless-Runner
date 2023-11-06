@@ -43,13 +43,17 @@ class RunState extends State {
     enter(scene, player) {
         player.anims.play(`p-run`)
         player.doubleJump = 0;
+        scene.hurt = false
     } 
     execute(scene, player) {
         // use destructuring to make a local copy of the keyboard object
         const { right, up, down, space} = scene.keys
 
-        // transition to swing if pressing space
-        //console.log(Phaser.Input.Keyboard.JustDown(up), scene.onFloor)
+        if(scene.hurt) {
+            this.stateMachine.transition('hurt')
+            return
+        }
+
         let collide = player.body.touching
         if(Phaser.Input.Keyboard.JustDown(up) && (scene.onFloor || collide.down)) {
             player.doubleJump = 1;
@@ -57,13 +61,11 @@ class RunState extends State {
             return
         }
 
-        // transition to dash if pressing shift
         if(Phaser.Input.Keyboard.JustDown(right)) {
             this.stateMachine.transition('dash')
             return
         }
 
-        // hurt if H key input (just for demo purposes)
         if(Phaser.Input.Keyboard.JustDown(down)) {
             this.stateMachine.transition('duck')
             return
@@ -73,7 +75,6 @@ class RunState extends State {
 
 class JumpState extends State {
     enter(scene, player) {
-        console.log("jump")
         player.anims.play(`p-jump`)
         scene.notJump = false
 
@@ -99,12 +100,10 @@ class JumpState extends State {
 
 class DubJumpState extends State {
     enter(scene, player) {
-        console.log("dub")
         player.setVelocityY(player.velocity)
     }
     execute(scene, player) {
         let collide = player.body.touching
-        console.log(collide.down)
         if(collide.down) {
             this.stateMachine.transition('run')
         }
@@ -127,6 +126,11 @@ class DuckState extends State {
 class HurtState extends State {
     enter(scene, player) {
         player.anims.play(`p-hurt`)
+        scene.chased = true
+        scene.waves = scene.time.delayedCall(3000, () => {
+            scene.chased = false
+            scene.firstHit= 0
+        }, null, scene)
         player.once('animationcomplete', () => {
             this.stateMachine.transition('run')
         })

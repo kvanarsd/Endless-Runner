@@ -29,7 +29,7 @@ class Menu extends Phaser.Scene {
     update() {
         if(Phaser.Input.Keyboard.JustDown(keySPACE)) {
             game.settings = {
-                increment: 10000
+                increment: 1000
             }
             this.scene.start("playScene");
         }
