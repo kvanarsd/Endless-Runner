@@ -16,10 +16,10 @@ class Obsticle extends Phaser.Physics.Arcade.Sprite {
 
     update() {
         if(this.x >= -borderUISize*2) {
-            this.x -= this.speed;
+              this.x -= this.speed;
         } else {
-            this.destroyed = true
-        }
+             this.destroyed = true
+        } 
         if(this.x <=  this.genIn&& !this.child) {
             this.child = true
         }

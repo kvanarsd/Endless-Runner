@@ -61,8 +61,8 @@ class Load extends Phaser.Scene {
 
         this.anims.create({
             key: 'p-dash',
-            frameRate: 3,
-            repeat: 0,
+            frameRate: 8,
+            repeat: 2,
             frames: this.anims.generateFrameNumbers('character', { start: 14, end: 14 }),
         })
 

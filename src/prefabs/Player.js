@@ -158,6 +158,7 @@ class DashState extends State {
     enter(scene, player) {
         player.anims.play(`p-dash`) 
         player.setVelocityX(-player.velocity/3)
+        scene.dashSpeed = 1.5
     }
     execute(scene, player) {
         console.log("dash", scene.hurt, player.x, player.x >= 190)
