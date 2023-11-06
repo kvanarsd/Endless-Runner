@@ -19,6 +19,9 @@ class Load extends Phaser.Scene {
             frameHeight: 93
         });
         this.load.image('sand', './assets/Sand.png');
+        this.load.image('menu1', './assets/Title.png');
+        this.load.image('menu3', './assets/Instructions.png');
+        this.load.image('end', './assets/End.png');
     }
 
     create() {

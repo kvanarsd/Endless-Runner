@@ -15,6 +15,7 @@ class Play extends Phaser.Scene {
         this.firstHit = 0;
         this.forward = false;
         this.dashSpeed = 0;
+        this.pause = false
 
         // background scene
         this.bckg1 = this.add.tileSprite(0, 0, game.config.width, game.config.height,"bckg1").setOrigin(0,0);
@@ -121,19 +122,18 @@ class Play extends Phaser.Scene {
         let scoreConfig = {
             fontFamily: "Garamond Bold",
             fontSize: "28px",
-            backgroundColor: "#facade",
-            color: "#843605",
+            backgroundColor: "#c8d3e6",
+            color: "#535e70",
             align: "right",
             padding: {
                 tom: 5,
                 bottom: 5,
-            },
-            fixedWidth: 100
+            }
         }
 
         
         this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding * 2, this.score, scoreConfig);
-        
+
         this.DistanceTravelled = this.time.addEvent({
             delay: 500,
             callback: () => {
@@ -143,6 +143,17 @@ class Play extends Phaser.Scene {
             callbackScope: this,
             loop: true
         })
+        
+        this.start = this.add.text((game.config.width)/2, game.config.height - borderUISize - borderPadding * 2, "Press SPACE to restart!", scoreConfig).setOrigin(0.5,0.5);
+        this.scored = this.add.text((game.config.width)/2, game.config.height/2 - borderUISize - borderPadding * 2, "", scoreConfig).setOrigin(0.5,0.5);
+        this.high = this.add.text((game.config.width)/2, game.config.height/2, "", scoreConfig).setOrigin(0.5,0.5);
+
+        this.start.depth = 10
+        this.start.setVisible(false) 
+        this.scored.depth = 10
+        this.scored.setVisible(false) 
+        this.high.depth = 10
+        this.high.setVisible(false) 
     }
 
     update() {
@@ -218,12 +229,32 @@ class Play extends Phaser.Scene {
             this.floor.tilePositionX += this.speed + this.dashSpeed;
 
             // score
-            
             this.score += this.speed + this.dashSpeed;
         } 
 
-        if(this.gameOver && Phaser.Input.Keyboard.JustDown(keySPACE)) {
-            this.scene.restart();
+        if(this.gameOver) {
+            this.difficulty.paused = true;
+            this.DistanceTravelled.paused = true;
+            let cur = Math.ceil(this.score/10);
+            if(cur > localStorage.getItem("score")) {
+                localStorage.setItem("score", cur);
+            }
+            this.end = this.time.delayedCall(1000, () => {
+                this.bckg = this.add.tileSprite(0,0,game.config.width,game.config.height,'end').setOrigin(0,0);
+                this.scored.text = "You got " + cur
+                this.high.text = "Current HighScore: " + localStorage.getItem("score")
+                this.scored.setVisible(true) 
+                this.high.setVisible(true) 
+
+                this.paused = this.time.delayedCall(1000, () => {
+                    this.pause = true;
+                    this.start.setVisible(true) 
+                });
+            });
+
+            if(this.pause && Phaser.Input.Keyboard.JustDown(keySPACE)) {
+                this.scene.restart();
+            }
         }
 
         

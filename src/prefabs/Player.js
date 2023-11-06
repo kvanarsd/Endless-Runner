@@ -15,8 +15,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.doubleJump = 0;
 
         //state machine
-        this.state = new StateMachine('start', {
-            start: new StartState(),
+        this.state = new StateMachine('run', {
             run: new RunState(),
             jump: new JumpState(),
             dubJump: new DubJumpState(),
@@ -27,17 +26,6 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
 }
 
-class StartState extends State {
-    execute(scene, player) {
-        const { space } = scene.keys
-
-        // transition to dash if pressing shift
-        if(Phaser.Input.Keyboard.JustDown(space)) {
-            this.stateMachine.transition('run')
-            return
-        }
-    }
-}
 
 class RunState extends State { 
     enter(scene, player) {
@@ -144,7 +132,7 @@ class HurtState extends State {
     enter(scene, player) {
         player.anims.play(`p-hurt`)
         scene.chased = true
-        scene.waves = scene.time.delayedCall(100, () => {
+        scene.waves = scene.time.delayedCall(2000, () => {
             scene.chased = false
             scene.firstHit= 0
         }, null, scene)
