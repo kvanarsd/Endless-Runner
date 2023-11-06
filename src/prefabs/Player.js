@@ -50,7 +50,8 @@ class RunState extends State {
 
         // transition to swing if pressing space
         //console.log(Phaser.Input.Keyboard.JustDown(up), scene.onFloor)
-        if(Phaser.Input.Keyboard.JustDown(up) && scene.onFloor) {
+        let collide = player.body.touching
+        if(Phaser.Input.Keyboard.JustDown(up) && (scene.onFloor || collide.down)) {
             player.doubleJump = 1;
             this.stateMachine.transition('jump')
             return
