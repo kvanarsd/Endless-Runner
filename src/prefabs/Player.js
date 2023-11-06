@@ -132,7 +132,8 @@ class HurtState extends State {
     enter(scene, player) {
         player.anims.play(`p-hurt`)
         scene.chased = true
-        scene.waves = scene.time.delayedCall(2000, () => {
+        scene.wave.x = -borderUISize*6
+        scene.waves = scene.time.delayedCall(5000, () => {
             scene.chased = false
             scene.firstHit= 0
         }, null, scene)
@@ -149,7 +150,6 @@ class DashState extends State {
         scene.dashSpeed = 1.5
     }
     execute(scene, player) {
-        console.log("dash", scene.hurt, player.x, player.x >= 190)
         if(scene.hurt) {
             this.stateMachine.transition('hurt')
             return

@@ -36,7 +36,7 @@ class Play extends Phaser.Scene {
         this.player = new Player(this, 150, game.config.height/2, "character", 7).setOrigin(0,0).setScale(.8 )
 
         // Bird obstacles
-        const newBird = new Obsticle(this, game.config.width,Phaser.Math.Between(game.config.height/2 + borderPadding*3, game.config.height - borderPadding*4), "ob3", 0, this.player, this.genIn).setOrigin(0,1)
+        const newBird = new Obsticle(this, game.config.width,Phaser.Math.Between(game.config.height/3, game.config.height - borderUISize*3), "ob3", 0, this.player, this.genIn).setOrigin(0,1)
         newBird.anims.play("bird");
         newBird.setSize(64, 20).setOffset(0, (newBird.height)/2.2);
         this.birds = this.physics.add.group(config = {
@@ -107,9 +107,7 @@ class Play extends Phaser.Scene {
                 this.genIn += 30
                 this.speed += .2
                 this.level += 1
-                console.log(this.level)
                 if(this.level % 10 == 0) {
-                    console.log("roll back")
                     this.genIn = this.genIn / 2
                     this.speed -= this.speed / 5
                 }
@@ -154,30 +152,38 @@ class Play extends Phaser.Scene {
         this.scored.setVisible(false) 
         this.high.depth = 10
         this.high.setVisible(false) 
+
+        //wave
+        this.wave = this.add.sprite(0 - borderUISize*9, game.config.height- 400 + borderUISize,"waveA", 6).setOrigin(0,0);
+        this.wave.play("wave")
     }
 
     update() {
-        //console.log(this.forward, this.player.x <= 150)
         if(!this.gameOver){
+            // dash
             if(this.player.state.state == 'dash') {
                 this.dashSpeed = 1.5
             }
-            console.log(this.dashSpeed)
             if(this.forward && !(this.player.x <= 150)) {
                 this.player.x -= 2
             } 
             if (this.player.x <= 150) {
-                console.log("not forward")
                 this.forward = false
                 this.dashSpeed = 0
             }
+
             // state
             this.player.state.step();
 
+            // hurt
             if(this.hurt && this.chased && this.firstHit > 1) {
+                this.wave.x = 0
                 this.player.setVelocityX(this.player.push)
                 this.gameOver = true
                 this.firstHit = 0
+            }
+            if(!this.chased && this.wave.x >= -borderUISize*9) {
+                this.wave.x -= 4;
             }
 
             // obstacle gen
@@ -194,7 +200,7 @@ class Play extends Phaser.Scene {
 
                 if(bird.child && !bird.birthed) {
                     bird.child = false;
-                    const newBird = new Obsticle(this, game.config.width, Phaser.Math.Between(game.config.height/2 + borderPadding*3, game.config.height - borderPadding*4), "ob3", 0, this.player, this.genIn).setOrigin(0,1)
+                    const newBird = new Obsticle(this, game.config.width, Phaser.Math.Between(game.config.height/3, game.config.height - borderUISize*3), "ob3", 0, this.player, this.genIn).setOrigin(0,1)
                     newBird.setSize(64, 20).setOffset(0, (newBird.height)/2.2);
                     newBird.anims.play("bird");
                     this.birds.add(newBird);

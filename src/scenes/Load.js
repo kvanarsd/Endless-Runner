@@ -8,6 +8,10 @@ class Load extends Phaser.Scene {
             frameWidth: 124,
             frameHeight: 138
         })
+        this.load.spritesheet('waveA', './assets/Waveanim.png', {
+            frameWidth: 431,
+            frameHeight: 402
+        });
         this.load.image('bckg1', './assets/bckg1.png');
         this.load.image('bckg2', './assets/bckg2.png');
         this.load.image('bckg3', './assets/bckg3.png');
@@ -25,6 +29,14 @@ class Load extends Phaser.Scene {
     }
 
     create() {
+        // anim for wave
+        this.anims.create({
+            key: 'wave',
+            frameRate: 6,
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers('waveA', { start: 0, end: 8 }),
+        })
+
         // animation for obsticle
         this.anims.create({
             key: 'bird',
