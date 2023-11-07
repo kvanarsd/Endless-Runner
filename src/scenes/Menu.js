@@ -41,10 +41,13 @@ class Menu extends Phaser.Scene {
         let music = this.sound.add('intro')
         music.loop = true
         music.play()
+
+        this.pressed = false
     }   
 
     update() {
-        if(Phaser.Input.Keyboard.JustDown(keySPACE)) {
+        if(!this.pressed && Phaser.Input.Keyboard.JustDown(keySPACE)) {
+            this.pressed = true
             this.bckg.setTexture('menu2')
             this.start.setVisible(false)
             this.credits = this.time.delayedCall(2500, () => {
