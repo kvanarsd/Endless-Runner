@@ -53,6 +53,8 @@ class Play extends Phaser.Scene {
         const newOb = new Obsticle(this, game.config.width *1.5,game.config.height - borderPadding*4, "ob" + Phaser.Math.Between(1, 2), 0, this.player, this.genIn).setOrigin(0,1)
         newOb.setSize(newOb.width - 20, newOb.height - 10).setOffset(10, 10);
 
+        // check that this new obstacle isn't too close to a current bird
+        // if it's too close move it back a little
         if(Phaser.Math.Distance.Between(newBird.x, newOb.x, newBird.y, newOb.y) <= 100) {
             newOb.x -= 50
         }
@@ -67,27 +69,32 @@ class Play extends Phaser.Scene {
             this.onFloor = true;
         });
 
+        // bird collision
         this.physics.add.collider(this.player, this.birds , (player, bird) => {
             let collide = player.body.touching
-            if(!collide.down || this.onFloor) {
+            if(!collide.down || this.onFloor) { // check that player is not on top of ground or obstacle
                 this.hurt = true;
                 this.firstHit += 1
 
+                // shake camera
                 let randomIntensity = Phaser.Math.FloatBetween(.001, .005)
                 this.camera.shake(300, randomIntensity, false)
                 
+                // if obstacle hasn't gen a new ob then generate one now
                 if(!bird.birthed) {
                     const newBird = new Obsticle(this, game.config.width, Phaser.Math.Between(game.config.height/2, game.config.height - borderPadding*4), "ob3", 0, this.player, this.genIn).setOrigin(0,1)
                     newBird.setSize(64, 20).setOffset(0, (newBird.height)/2.2);
                     newBird.anims.play("bird");
                     this.birds.add(newBird);
                     bird.birthed = true
+                    // subract points for collision
                     this.score -= 5 + this.level
                 }
                 bird.destroy();
             }
         }, null, this);
 
+        // ground obstacle collision
         this.physics.add.collider(this.player, this.obs , (player, ob) => {
             let collide = player.body.touching
             if(!collide.down || this.onFloor) {
@@ -97,16 +104,22 @@ class Play extends Phaser.Scene {
                 let randomIntensity = Phaser.Math.FloatBetween(.001, .005)
                 this.camera.shake(300, randomIntensity, false)
 
+                // if obstacle hasn't gen a new ob then generate one now
                 if(!ob.birthed) {
                     const newOb = new Obsticle(this, game.config.width,game.config.height - borderPadding*4, "ob" + Phaser.Math.Between(1, 2), 0, this.player, this.genIn/2).setOrigin(0,1)
                     newOb.setSize(newOb.width - 20, newOb.height - 10).setOffset(10, 10);
                     this.obs.add(newOb);
+                    
+                    // check that this new obstacle isn't too close to a current bird
+                    // if it's too close move it back a little
                     this.birds.getChildren().forEach((bird) => {
                         if(Phaser.Math.Distance.Between(bird.x, newOb.x, bird.y, newOb.y) <= 400) {
                             newOb.x -= 50
                         }
                     })
                     ob.birthed = true
+
+                    // subract points for collision
                     this.score -= 5 + this.level
                 }
                 ob.destroy();
@@ -145,7 +158,7 @@ class Play extends Phaser.Scene {
             }
         }
 
-        
+        // score delayed display
         this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding * 2, this.score, scoreConfig);
 
         this.DistanceTravelled = this.time.addEvent({
@@ -158,6 +171,7 @@ class Play extends Phaser.Scene {
             loop: true
         })
         
+        // ending screen text set up
         this.start = this.add.text((game.config.width)/2, game.config.height - borderUISize - borderPadding * 2, "Press SPACE to restart!", scoreConfig).setOrigin(0.5,0.5);
         this.scored = this.add.text((game.config.width)/2, game.config.height/2 - borderUISize - borderPadding * 2, "", scoreConfig).setOrigin(0.5,0.5);
         this.high = this.add.text((game.config.width)/2, game.config.height/2, "", scoreConfig).setOrigin(0.5,0.5);
@@ -205,15 +219,18 @@ class Play extends Phaser.Scene {
             // obstacle gen
             this.birds.getChildren().forEach((bird) => {
                 bird.update(); // Update obstacle logic
+                // move faster if player is dashing
                 if(this.player.state.state == 'dash') {
                     bird.x -= this.dashSpeed
                 }
 
+                // destroy bird
                 if (bird.destroyed) {
                     bird.destroy();
                     this.birds.remove(bird, true, true); // Remove obstacle from the group
                 }
 
+                // generate new bird
                 if(bird.child && !bird.birthed) {
                     bird.child = false;
                     const newBird = new Obsticle(this, game.config.width, Phaser.Math.Between(game.config.height/2, game.config.height - borderUISize*3), "ob3", 0, this.player, this.genIn).setOrigin(0,1)
@@ -226,21 +243,27 @@ class Play extends Phaser.Scene {
 
             this.obs.getChildren().forEach((ob) => {
                 ob.update(); // Update obstacle logic
+                // move faster if player is dashing
                 if(this.player.state.state == 'dash') {
                     ob.x -= this.dashSpeed
                 }
-
+                
+                // destroy obsticle
                 if (ob.destroyed) {
                     ob.destroy();
                     this.obs.remove(ob, true, true); // Remove obstacle from the group
                 }
 
+                // gen obsticle
                 if(ob.child && !ob.birthed) { 
                     const newOb = new Obsticle(this, game.config.width,game.config.height - borderPadding*4, "ob" + Phaser.Math.Between(1, 2), 0, this.player, this.genIn/2).setOrigin(0,1)
                     newOb.setSize(newOb.width - 20, newOb.height - 10).setOffset(10, 10);
+                    
+                    // check that this new obstacle isn't too close to a current bird
+                    // if it's too close move it back a little
                     this.birds.getChildren().forEach((bird) => {
                         if(Phaser.Math.Distance.Between(bird.x, newOb.x, bird.y, newOb.y) <= 400) {
-                            newOb.x -= 50
+                            newOb.x += 50
                         }
                     })
                     this.obs.add(newOb);
@@ -259,6 +282,7 @@ class Play extends Phaser.Scene {
             this.score += this.speed + this.dashSpeed;
         } 
 
+        // ending screen
         if(this.gameOver) {
             this.difficulty.paused = true;
             this.DistanceTravelled.paused = true;
@@ -273,12 +297,14 @@ class Play extends Phaser.Scene {
                 this.scored.setVisible(true) 
                 this.high.setVisible(true) 
 
+                // delay for restart (show the end screen long enough before allowing restart)
                 this.paused = this.time.delayedCall(1000, () => {
                     this.pause = true;
                     this.start.setVisible(true) 
                 });
             });
 
+            // restart
             if(this.pause && Phaser.Input.Keyboard.JustDown(keySPACE)) {
                 this.scene.restart();
             }
