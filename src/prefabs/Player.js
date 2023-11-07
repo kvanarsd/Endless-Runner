@@ -63,6 +63,7 @@ class RunState extends State {
 
 class JumpState extends State {
     enter(scene, player) {
+        scene.sound.play('boing')
         player.anims.play(`p-jump`)
         scene.notJump = false
 
@@ -93,6 +94,7 @@ class JumpState extends State {
 
 class DubJumpState extends State {
     enter(scene, player) {
+        scene.sound.play('boing')
         player.setVelocityY(player.velocity)
     }
     execute(scene, player) {
@@ -110,6 +112,7 @@ class DubJumpState extends State {
 
 class DuckState extends State {
     enter(scene, player) {
+        scene.sound.play('low')
         player.body.setSize(124,30).setOffset(0,108)
         player.anims.play(`p-duck`)
         
@@ -130,6 +133,7 @@ class DuckState extends State {
 
 class HurtState extends State {
     enter(scene, player) {
+        scene.sound.play('hit')
         player.anims.play(`p-hurt`)
         scene.chased = true
         scene.wave.x = -borderUISize*6
@@ -145,6 +149,7 @@ class HurtState extends State {
 
 class DashState extends State {
     enter(scene, player) {
+        scene.sound.play('zoom')
         player.anims.play(`p-dash`) 
         player.setVelocityX(-player.velocity/3)
         scene.dashSpeed = 1.5

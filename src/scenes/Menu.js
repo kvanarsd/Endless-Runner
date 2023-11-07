@@ -20,7 +20,7 @@ class Menu extends Phaser.Scene {
             fixedWidth: 0
         }
         
-        this.bckg = this.add.tileSprite(0,0,game.config.width,game.config.height,'menu1').setOrigin(0,0);
+        this.bckg = this.add.image(0,0,'menu1').setOrigin(0,0);
 
         let Config = {
             fontFamily: "Garamond Bold",
@@ -36,8 +36,11 @@ class Menu extends Phaser.Scene {
         this.start = this.add.text((game.config.width)/1.5, game.config.height - borderUISize - borderPadding * 2, "Press SPACE to start!", Config);
 
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-        //localStorage.setItem(score, 0);
-    }
+        
+        let music = this.sound.add('intro')
+        music.loop = true
+        music.play()
+    }   
 
     update() {
         if(Phaser.Input.Keyboard.JustDown(keySPACE)) {
