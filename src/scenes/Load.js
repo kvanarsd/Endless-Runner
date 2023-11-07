@@ -24,6 +24,7 @@ class Load extends Phaser.Scene {
         });
         this.load.image('sand', './assets/Sand.png');
         this.load.image('menu1', './assets/Title.png');
+        this.load.image('menu2', './assets/Credits.png');
         this.load.image('menu3', './assets/Instructions.png');
         this.load.image('end', './assets/End.png');
         this.load.audio('intro', './assets/intro.mp3')

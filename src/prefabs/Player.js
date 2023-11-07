@@ -6,10 +6,10 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this, false);
 
         //this.body.setCollideWorldBounds(true);
-        this.body.setGravityY(700);
-        this.body.setSize(50,138).setOffset(74,0)
+        this.body.setGravityY(900);
+        this.body.setSize(45,138).setOffset(74,0)
 
-        this.velocity = -400;
+        this.velocity = -500;
         this.push = -300;
         this.jumpCool = 800;
         this.doubleJump = 0;
@@ -118,6 +118,7 @@ class DuckState extends State {
         
     }execute(scene, player) {
         if(scene.hurt) {
+            player.body.setSize(50,138).setOffset(74,0)
             this.stateMachine.transition('hurt')
             return
         }

@@ -36,7 +36,8 @@ class Menu extends Phaser.Scene {
         this.start = this.add.text((game.config.width)/1.5, game.config.height - borderUISize - borderPadding * 2, "Press SPACE to start!", Config);
 
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-        
+
+
         let music = this.sound.add('intro')
         music.loop = true
         music.play()
@@ -44,14 +45,17 @@ class Menu extends Phaser.Scene {
 
     update() {
         if(Phaser.Input.Keyboard.JustDown(keySPACE)) {
-            this.bckg.setTexture('menu3')
+            this.bckg.setTexture('menu2')
             this.start.setVisible(false)
-
-            this.instruct = this.time.delayedCall(2000, () => {
-                game.settings = {
-                    increment: 10000
-                }
-                this.scene.start("playScene");
+            this.credits = this.time.delayedCall(2500, () => {
+                this.bckg.setTexture('menu3')
+            
+                this.instruct = this.time.delayedCall(5000, () => {
+                    game.settings = {
+                        increment: 10000
+                    }
+                    this.scene.start("playScene");
+                });
             });
         }
     }

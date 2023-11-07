@@ -51,6 +51,7 @@ class Play extends Phaser.Scene {
         
         // Other obstacles
         const newOb = new Obsticle(this, game.config.width *1.5,game.config.height - borderPadding*4, "ob" + Phaser.Math.Between(1, 2), 0, this.player, this.genIn).setOrigin(0,1)
+        newOb.setSize(newOb.width - 20, newOb.height - 10).setOffset(10, 10);
 
         if(Phaser.Math.Distance.Between(newBird.x, newOb.x, newBird.y, newOb.y) <= 100) {
             newOb.x -= 50
@@ -98,11 +99,11 @@ class Play extends Phaser.Scene {
 
                 if(!ob.birthed) {
                     const newOb = new Obsticle(this, game.config.width,game.config.height - borderPadding*4, "ob" + Phaser.Math.Between(1, 2), 0, this.player, this.genIn/2).setOrigin(0,1)
+                    newOb.setSize(newOb.width - 20, newOb.height - 10).setOffset(10, 10);
                     this.obs.add(newOb);
                     this.birds.getChildren().forEach((bird) => {
-                        if(Phaser.Math.Distance.Between(bird.x, newOb.x, bird.y, newOb.y) <= 300) {
+                        if(Phaser.Math.Distance.Between(bird.x, newOb.x, bird.y, newOb.y) <= 400) {
                             newOb.x -= 50
-                            console.log("too close!")
                         }
                     })
                     ob.birthed = true
@@ -220,10 +221,6 @@ class Play extends Phaser.Scene {
                     newBird.anims.play("bird");
                     this.birds.add(newBird);
                     bird.birthed = true
-
-                    this.obs.getChildren().forEach((ob) => {
-                        console.log(Phaser.Math.Distance.Between(newBird.x, ob.x, newBird.y,ob.y))
-                    })
                 }
             });
 
@@ -240,12 +237,10 @@ class Play extends Phaser.Scene {
 
                 if(ob.child && !ob.birthed) { 
                     const newOb = new Obsticle(this, game.config.width,game.config.height - borderPadding*4, "ob" + Phaser.Math.Between(1, 2), 0, this.player, this.genIn/2).setOrigin(0,1)
-                    //console.log("birth")
+                    newOb.setSize(newOb.width - 20, newOb.height - 10).setOffset(10, 10);
                     this.birds.getChildren().forEach((bird) => {
-                        console.log(Phaser.Math.Distance.Between(bird.x, newOb.x, bird.y, newOb.y))
-                        if(Phaser.Math.Distance.Between(bird.x, newOb.x, bird.y, newOb.y) <= 300) {
+                        if(Phaser.Math.Distance.Between(bird.x, newOb.x, bird.y, newOb.y) <= 400) {
                             newOb.x -= 50
-                            console.log("too close!")
                         }
                     })
                     this.obs.add(newOb);
