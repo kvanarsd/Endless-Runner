@@ -88,9 +88,8 @@ class Play extends Phaser.Scene {
                     this.birds.add(newBird);
                     bird.birthed = true
                     // subract points for collision
-    
+                    this.score -= (50 + this.level)*10
                     let dist = Math.ceil(this.score/10)
-                    dist -= 50 + this.level
                     this.scoreLeft.text = dist;
                 }
                 bird.destroy();
@@ -123,8 +122,8 @@ class Play extends Phaser.Scene {
                     ob.birthed = true
 
                     // subract points for collision
+                    this.score -= (50 + this.level)*10
                     let dist = Math.ceil(this.score/10)
-                    dist -= 50 + this.level
                     this.scoreLeft.text = dist;
                 }
                 ob.destroy();
