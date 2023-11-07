@@ -120,7 +120,7 @@ class Play extends Phaser.Scene {
                     ob.birthed = true
 
                     // subract points for collision
-                    this.score -= 5 + this.level
+                    this.score -= 20 + this.level
                 }
                 ob.destroy();
             }
